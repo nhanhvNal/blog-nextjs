@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 function HomeContainer() {
   const { data, status } = useSession();
   const router = useRouter();
@@ -13,6 +14,8 @@ function HomeContainer() {
     if (status === "unauthenticated") {
       router.replace("/login");
     }
+    console.log(data);
+    
   }, [status]);
 
   return (
@@ -28,7 +31,9 @@ function HomeContainer() {
           onClick={async () => {
             try {
               await signOut({ redirect: true });
-            } catch (error) {}
+            } catch (error) {
+              console.log(error);
+            }
           }}
         >
           Sign out

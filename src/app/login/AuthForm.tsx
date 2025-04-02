@@ -4,9 +4,9 @@ import AuthFields from "./AuthFields";
 interface AuthFormProps {
   isSignUp: boolean;
   onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-  register?: any;
-  watch?: any;
-  errors?: any;
+  register?: unknown;
+  watch?: unknown;
+  errors?: unknown;
 }
 
 export default function AuthForm({

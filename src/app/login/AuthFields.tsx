@@ -1,5 +1,6 @@
 import { Form } from "react-bootstrap";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 interface AuthFieldsProps {
   isSignUp: boolean;
   register: any;

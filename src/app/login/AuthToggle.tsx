@@ -20,7 +20,7 @@ export default function AuthToggle({
           </>
         ) : (
           <>
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <button
               onClick={() => setIsSignUp(true)}
               className="text-blue-500 hover:text-blue-600"

@@ -18,7 +18,7 @@ export type ApiErrorDetail = {
   message: string;
 };
 
-export type FormError = Pick<ApiErrorDetail, 'field' | 'message'>;
+export type FormError = Pick<ApiErrorDetail, "field" | "message">;
 
 export type ApiResponseError = {
   message: string;
@@ -29,10 +29,11 @@ export type ApiResponseError = {
   formErrors?: FormError[];
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export type ApiRequestParams = {
   page?: number;
   offset?: number;
   sort_column?: string;
-  sort_type?: 'desc' | 'asc';
+  sort_type?: "desc" | "asc";
   [key: string]: any;
 };

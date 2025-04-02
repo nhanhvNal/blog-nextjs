@@ -1,16 +1,15 @@
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import { redirect } from 'next/navigation';
-import { getSession } from 'next-auth/react';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from "axios";
+import { redirect } from "next/navigation";
+import { getSession } from "next-auth/react";
 
-import { API_URL, ROUTE_PATHS } from '@/shared/constants';
-import { ApiResponseError } from '@/types/api';
+import { API_URL, ROUTE_PATHS } from "@/shared/constants";
+import { ApiResponseError } from "@/types/api";
 
 const DEFAULT_AXIOS_CONFIG: AxiosRequestConfig = {
   baseURL: API_URL,
   timeout: 30000,
 };
 
-/* eslint-disable no-param-reassign, @typescript-eslint/no-non-null-assertion */
 export default class V1 {
   public client: AxiosInstance;
 
@@ -32,11 +31,11 @@ export default class V1 {
   }
 
   get isServer() {
-    return typeof window === 'undefined';
+    return typeof window === "undefined";
   }
 
   private requestInterceptor() {
-    this.client.interceptors.request.use(async config => {
+    this.client.interceptors.request.use(async (config) => {
       const token = await this.getAccessToken();
       if (token) {
         config.headers.Authorization = token;
@@ -46,7 +45,7 @@ export default class V1 {
         return config;
       }
 
-      config.headers['Content-Type'] = 'application/json';
+      config.headers["Content-Type"] = "application/json";
 
       return config;
     });
@@ -54,8 +53,8 @@ export default class V1 {
 
   private responseInterceptor() {
     this.client.interceptors.response.use(
-      response => response,
-      error => this.handleError(error)
+      (response) => response,
+      (error) => this.handleError(error)
     );
   }
 

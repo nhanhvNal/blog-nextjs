@@ -58,7 +58,7 @@ function AuthContainer() {
         setIsSignUp(false);
         alert("Sign-up successful!");
       }
-    } catch (error) {
+    } catch {
       alert("Sign-up failed.");
     }
   };
@@ -90,7 +90,7 @@ function AuthContainer() {
       } else {
         await handleLogin(data);
       }
-    } catch (error) {
+    } catch {
       alert("Error during authentication:");
     } finally {
       setIsLoading(false);

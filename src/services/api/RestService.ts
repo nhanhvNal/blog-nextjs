@@ -7,6 +7,7 @@ import {
   FormError,
 } from "@/types/api";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export default class RestService<T = any> {
   constructor(protected axios: AxiosInstance, protected resource: string) {}
 
@@ -24,7 +25,7 @@ export default class RestService<T = any> {
     payload: Partial<T> | FormData,
     options?: AxiosRequestConfig & { formFields?: string[] }
   ) {
-    const { formFields = [], ...config } = options || {};
+    const { formFields = [], ...config } = options ?? {};
     return new Promise((resolve, reject) => {
       this.axios
         .post<ApiResponseData<R>>(`${this.resource}`, payload, config)
@@ -38,7 +39,7 @@ export default class RestService<T = any> {
     payload: Partial<T> | FormData,
     options?: AxiosRequestConfig & { formFields?: string[] }
   ) {
-    const { formFields = [], ...config } = options || {};
+    const { formFields = [], ...config } = options ?? {};
     return new Promise((resolve, reject) => {
       this.axios
         .put<ApiResponseData<R>>(`${this.resource}/${id}`, payload, config)
@@ -56,6 +57,7 @@ export default class RestService<T = any> {
     });
   }
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   collection<G = any>(subResource: string, config?: AxiosRequestConfig<G>) {
     return this.axios.request<ApiResponseData<G>>({
       ...config,
@@ -63,6 +65,7 @@ export default class RestService<T = any> {
     });
   }
 
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   member<G = any>(
     id: number,
     subResource: string,
@@ -89,7 +92,7 @@ export default class RestService<T = any> {
       return error;
     }
 
-    const formErrors = apiErrors.reduce((acc, { field, code, message }) => {
+    const formErrors = apiErrors.reduce((acc, { field, code }) => {
       if (
         formFields.includes(field) ||
         formFields.some((visibleField) => field.startsWith(`${visibleField}.`))
