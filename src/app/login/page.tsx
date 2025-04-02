@@ -1,19 +1,21 @@
 "use client";
 
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
+import { SessionProvider, signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import AuthForm from "@/components/common/AuthForm";
-import AuthToggle from "@/components/common/AuthToggle";
-import OAuthButton from "@/components/common/OAuthButton";
-import { FormDataSignUp } from "@/components/common/SignInForm";
 import { userService } from "@/services/api";
 import { UserModel } from "@/types/user.model";
+import AuthForm from "./AuthForm";
+import AuthToggle from "./AuthToggle";
+import OAuthButton from "./OAuthButton";
+import { FormDataSignUp } from "@/types/auth.model";
+import LoadingPage from "@/components/common/LoadingPage";
 
 function AuthContainer() {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
   const router = useRouter();
   const {
@@ -23,22 +25,11 @@ function AuthContainer() {
     formState: { errors },
   } = useForm<FormDataSignUp>();
 
-  if (session) {
-    return (
-      <>
-        Signed in as {session?.user?.email} <br />
-        <button
-          onClick={async () => {
-            try {
-              await signOut({ redirect: true });
-            } catch (error) {}
-          }}
-        >
-          Sign out
-        </button>
-      </>
-    );
-  }
+  useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+  }, [session, router]);
 
   const validateSignUp = (formData: FormDataSignUp): string | null => {
     if (!formData.email?.includes("@")) return "Invalid email.";
@@ -92,32 +83,41 @@ function AuthContainer() {
   };
 
   const handleFormSubmit = async (data: FormDataSignUp) => {
-    if (isSignUp) {
-      await handleSignUp(data);
-      return;
+    setIsLoading(true);
+    try {
+      if (isSignUp) {
+        await handleSignUp(data);
+      } else {
+        await handleLogin(data);
+      }
+    } catch (error) {
+      alert("Error during authentication:");
+    } finally {
+      setIsLoading(false);
     }
-
-    await handleLogin(data);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-semibold text-center text-gray-700">
-          {isSignUp ? "Sign Up" : "Login"}
-        </h2>
+    <>
+      <LoadingPage isLoading={isLoading} />
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="bg-white p-6 rounded-lg shadow-md w-96">
+          <h2 className="text-2xl font-semibold text-center text-gray-700">
+            {isSignUp ? "Sign Up" : "Login"}
+          </h2>
 
-        <AuthForm
-          isSignUp={isSignUp}
-          onSubmit={handleSubmit(handleFormSubmit)}
-          register={register}
-          watch={watch}
-          errors={errors}
-        />
-        <OAuthButton isSignUp={isSignUp} />
-        <AuthToggle isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
+          <AuthForm
+            isSignUp={isSignUp}
+            onSubmit={handleSubmit(handleFormSubmit)}
+            register={register}
+            watch={watch}
+            errors={errors}
+          />
+          <OAuthButton isSignUp={isSignUp} />
+          <AuthToggle isSignUp={isSignUp} setIsSignUp={setIsSignUp} />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

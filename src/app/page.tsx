@@ -1,6 +1,6 @@
 "use client";
 
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -22,6 +22,18 @@ function HomeContainer() {
       <Link href="/blog">
         <button>Xem tất cả bài viết</button>
       </Link>
+
+      <div>
+        <button
+          onClick={async () => {
+            try {
+              await signOut({ redirect: true });
+            } catch (error) {}
+          }}
+        >
+          Sign out
+        </button>
+      </div>
     </div>
   );
 }
