@@ -1,6 +1,6 @@
 "use client";
 
-import { SessionProvider, signIn, useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -13,7 +13,7 @@ import OAuthButton from "./OAuthButton";
 import { FormDataSignUp } from "@/types/auth.model";
 import LoadingPage from "@/components/common/LoadingPage";
 
-function AuthContainer() {
+export default function AuthContainer() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { data: session } = useSession();
@@ -105,7 +105,6 @@ function AuthContainer() {
           <h2 className="text-2xl font-semibold text-center text-gray-700">
             {isSignUp ? "Sign Up" : "Login"}
           </h2>
-
           <AuthForm
             isSignUp={isSignUp}
             onSubmit={handleSubmit(handleFormSubmit)}
@@ -118,13 +117,5 @@ function AuthContainer() {
         </div>
       </div>
     </>
-  );
-}
-
-export default function App() {
-  return (
-    <SessionProvider>
-      <AuthContainer />
-    </SessionProvider>
   );
 }

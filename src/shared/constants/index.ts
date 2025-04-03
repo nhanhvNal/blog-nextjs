@@ -17,3 +17,8 @@ export const ROUTE_PATHS = {
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: "/forgot-password/reset",
 };
+
+export enum ThemeMode {
+  DARK = "dark",
+  LIGHT = "light",
+}

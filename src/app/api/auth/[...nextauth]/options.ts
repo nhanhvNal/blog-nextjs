@@ -4,7 +4,6 @@ import Credentials from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 
 import { userService } from "@/services/api";
-import { UserModel } from "@/types/user.model";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const authOptions = {
@@ -17,13 +16,8 @@ export const authOptions = {
         }
 
         try {
-          const { data: users } = (await fetchUserFromApi()) as any;
-
-          const user = users.find(
-            (u: UserModel) =>
-              u.email === credentials.email &&
-              u.password === credentials.password
-          );
+          const { data = [] } = await checkUserIsExistFromApi(credentials);
+          const user = data[0];
 
           if (!user) {
             throw new Error("Invalid email or password");
@@ -42,12 +36,8 @@ export const authOptions = {
       },
     }),
     GoogleProvider({
-      clientId:
-        process.env.GOOGLE_CLIENT_ID ??
-        "701083779640-23mhl9883d5r2ltq9jo3jhq497jir49d.apps.googleusercontent.com",
-      clientSecret:
-        process.env.GOOGLE_CLIENT_SECRET ??
-        "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",
+      clientId: process.env.GOOGLE_CLIENT_ID.toString(),
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET.toString(),
     }),
   ],
   pages: {
@@ -77,6 +67,9 @@ export const authOptions = {
   },
 };
 
-const fetchUserFromApi = async () => {
-  return userService.index();
+const checkUserIsExistFromApi = async (credentials) => {
+  return userService.index({
+    email: credentials.email,
+    password: credentials.password,
+  });
 };

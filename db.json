@@ -1,0 +1,86 @@
+{
+  "posts": [
+    {
+      "id": "1",
+      "title": "Làm quen với Next.js",
+      "description": "Hướng dẫn làm quen với Next.js, framework phát triển web hiện đại.",
+      "content": "Next.js là một framework phát triển ứng dụng React với nhiều tính năng mạnh mẽ như SSR, SSG, API Routes và khả năng tối ưu hóa hiệu suất.",
+      "image": "https://i.postimg.cc/nVqn54KQ/1.jpg",
+      "date": "2025-04-03"
+    },
+    {
+      "id": "2",
+      "title": "Tối ưu SEO cho Website",
+      "description": "Các bước tối ưu hóa SEO để cải thiện thứ hạng trên Google.",
+      "content": "SEO là một yếu tố quan trọng trong việc đưa website lên top của công cụ tìm kiếm. Cải thiện SEO giúp bạn có nhiều lưu lượng truy cập tự nhiên hơn.",
+      "image": "https://i.postimg.cc/BnXkWsWw/2.png",
+      "date": "2025-04-02"
+    },
+    {
+      "id": "3",
+      "title": "Kết nối API với Next.js",
+      "description": "Hướng dẫn kết nối API trong Next.js và cách xử lý dữ liệu.",
+      "content": "Next.js cho phép bạn dễ dàng tích hợp API vào ứng dụng của mình, hỗ trợ cả SSR và SSG để mang lại hiệu suất tối ưu.",
+      "image": "https://i.postimg.cc/kX5h895X/3.jpg",
+      "date": "2025-03-30"
+    },
+    {
+      "id": "4",
+      "title": "Phát triển Web bằng TypeScript",
+      "description": "Lợi ích của TypeScript trong việc phát triển ứng dụng web.",
+      "content": "TypeScript giúp đảm bảo tính ổn định và giảm thiểu lỗi trong mã nguồn của bạn. Nó cung cấp khả năng kiểm tra kiểu dữ liệu và hoàn thiện mã nguồn tốt hơn.",
+      "image": "https://i.postimg.cc/W4cn9PsZ/4.png",
+      "date": "2025-03-28"
+    }
+  ],
+  "users": [
+    {
+      "createdAt": 1743579452,
+      "name": "name 1",
+      "avatar": "avatar 1",
+      "email": "nhanhv@nal.vn",
+      "password": "nhanhv@nal.vn",
+      "session-token": "session-token 1",
+      "id": "1"
+    },
+    {
+      "createdAt": 1743579392,
+      "name": "name 2",
+      "avatar": "avatar 2",
+      "email": "Elsa.Larson@yahoo.com",
+      "password": "password 2",
+      "session-token": "session-token 2",
+      "id": "2"
+    },
+    {
+      "createdAt": 1743579332,
+      "name": "name 3",
+      "avatar": "avatar 3",
+      "email": "Delpha_Gutkowski-Ferry78@hotmail.com",
+      "password": "password 3",
+      "session-token": "session-token 3",
+      "id": "3"
+    },
+    {
+      "createdAt": 1743579272,
+      "name": "name 4",
+      "avatar": "avatar 4",
+      "email": "Christelle78@gmail.com",
+      "password": "password 4",
+      "session-token": "session-token 4",
+      "id": "4"
+    },
+    {
+      "id": "5608",
+      "email": "hoang94nhan@gmail.com",
+      "password": "hoang94nhan@gmail.com",
+      "name": "nhan"
+    },
+    {
+      "id": "ade5",
+      "email": "hoang95nhan@gmail.com",
+      "password": "hoang94nhan@gmail.com",
+      "name": "nhan"
+    }
+  ]
+}
