@@ -4,12 +4,15 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import LoadingPage from "./LoadingPage";
+import Button from "./Button";
+import { useRouter, usePathname } from "next/navigation";
+import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/post", label: "Post" },
-  { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
+  { href: "/about", label: "About Us" },
+  { href: "/contact", label: "Get in Touch" },
 ];
 
 const Header = () => {
@@ -17,6 +20,22 @@ const Header = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
+  const heightHeader=isHomePage?342:64
+
+  useEffect(() => {
+    setIsScrolled(window.scrollY > heightHeader);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > heightHeader);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [heightHeader]);
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -51,74 +70,134 @@ const Header = () => {
   return (
     <>
       <LoadingPage isLoading={isLoading} />
-      <header className="bg-gradient-to-r from-blue-500 to-teal-400 py-5 ">
-        <div className="flex-grow max-w-4xl mx-auto px-6 flex justify-between items-center">
-          <div className="text-3xl font-bold text-white">
-            <Link href="/">My Blog</Link>
-          </div>
-          <nav>
-            <ul className="flex space-x-10">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-white hover:text-yellow-300 transition-all duration-300 font-semibold"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="flex items-center space-x-4 relative">
-            {session ? (
-              <button
-                onClick={toggleDropdown}
-                className="flex items-center space-x-2 bg-white text-blue-500 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
-              >
-                {session.user?.image ? (
-                  <img
-                    src={session.user.image}
-                    alt="User Avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                    <span className="text-white text-lg">
-                      {session.user?.name?.[0]}
-                    </span>
-                  </div>
-                )}
-              </button>
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="bg-white text-blue-500 rounded-full px-6 py-2 shadow-md hover:shadow-xl active:scale-98 active:translate-y-0.5 transition-all duration-300 ease-in-out"
-              >
-                Login
-              </button>
-            )}
 
-            {isDropdownOpen && session && (
-              <div
-                ref={dropdownRef}
-                className="absolute top-8 right-0 mt-2 w-48 bg-white shadow-lg rounded-lg text-black transition-all transform opacity-0 animate-dropdown"
-                style={{ transform: "translateY(0)" }}
-              >
-                <div className="p-4">
-                  <p className="font-semibold">{session.user?.name}</p>
-                  <button
-                    onClick={() => signOut()}
-                    className="mt-2 w-full text-left text-blue-500 hover:bg-gray-100 rounded-lg py-2 px-4"
-                  >
-                    Logout
-                  </button>
+      <div
+        className={`relative bg-gradient-to-r from-blue-600 to-teal-500 p text-center text-white overflow-hidden ${
+          isHomePage ? "py-20" : "py-8"
+        }`}
+      >
+        <div
+          className={`fixed top-3 left-1/2 transform -translate-x-1/2 w-full max-w-6xl px-6 flex justify-center items-center z-50 transition-all  ${
+            isScrolled
+              ? "bg-gradient-to-r top-0 from-blue-600 to-teal-500 py-6 max-w-full text-center text-white mt-[-15px]"
+              : "bg-transparent"
+          }`}
+        >
+          <div
+            className={`flex justify-between items-center gap-8${
+              isScrolled ? " max-w-6xl" : ""
+            }`}
+          >
+            <div className="text-3xl font-bold text-white">
+              <Link href="/" aria-label="Go to Home Page">
+                Tech Insights Blog
+              </Link>
+            </div>
+            <nav>
+              <ul className="flex space-x-10">
+                {navLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-white hover:text-yellow-300 transition-all duration-300 font-semibold"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="flex items-center space-x-4 relative">
+              {session ? (
+                <button
+                  onClick={toggleDropdown}
+                  className="flex items-center space-x-2 bg-white text-blue-500 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+                >
+                  {session.user?.image ? (
+                    <Image
+                      width={32}
+                      height={32}
+                      src={session.user?.image}
+                      alt="User Avatar"
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
+                      <span className="text-white text-lg">
+                        {session.user?.name?.[0]}
+                      </span>
+                    </div>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={handleLogin}
+                  className="bg-white text-blue-500 rounded-full px-6 py-2 shadow-md hover:shadow-xl active:scale-98 active:translate-y-0.5 transition-all duration-300 ease-in-out"
+                >
+                  Sign In
+                </button>
+              )}
+
+              {isDropdownOpen && session && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute z-50 top-8 right-0 mt-2 w-48 bg-white shadow-lg rounded-lg text-black transition-all transform opacity-0 animate-dropdown"
+                  style={{
+                    transform: "translateY(0)",
+                    transition: "transform 0.3s ease, opacity 0.3s ease",
+                  }}
+                >
+                  <div className="p-4 grid gap-4">
+                    <p className="font-semibold text-lg">
+                      Hello {session.user?.name}
+                    </p>
+                    <Button
+                      className="w-full"
+                      label="Dashboard"
+                      color="lime"
+                      onClick={() => {
+                        router.push("/dashboard");
+                        setIsDropdownOpen(false);
+                      }}
+                    />
+                    <Button
+                      className="w-full"
+                      label="Logout"
+                      color="teal"
+                      onClick={() => signOut()}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
-      </header>
+        {isHomePage && (
+          <>
+          <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-10">
+            <div className="absolute -top-40 -left-40 w-80 h-80 bg-white rounded-full"></div>
+            <div className="absolute top-20 right-10 w-40 h-40 bg-white rounded-full"></div>
+            <div className="absolute bottom-10 left-1/4 w-60 h-60 bg-white rounded-full"></div>
+          </div>
+            <div className="relative z-10 px-4">
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 animate-fade-in">
+                Welcome to Leap of Faith
+              </h1>
+              <p className="text-lg max-w-2xl mx-auto opacity-90">
+                Sharing ideas, stories, and experiences about life, technology,
+                and creative pursuits.
+              </p>
+              <Link
+                href="/about"
+                className="mt-8 inline-block bg-white text-blue-600 font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-opacity-90 transition-all transform hover:translate-y-[-2px]"
+              >
+                Learn More About Me
+              </Link>
+            </div>
+          </>
+        )}
+      </div>
     </>
   );
 };

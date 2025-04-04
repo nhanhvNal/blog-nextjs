@@ -13,7 +13,7 @@ async function getBlogDetail(id: string): Promise<PostModel> {
 export default async function PostDetailPage({
   params,
 }: Readonly<{
-  params: { id: string };
+  params;
 }>) {
   const post = await getBlogDetail(params.id);
 

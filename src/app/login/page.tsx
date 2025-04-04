@@ -12,10 +12,15 @@ import AuthToggle from "./AuthToggle";
 import OAuthButton from "./OAuthButton";
 import { FormDataSignUp } from "@/types/auth.model";
 import LoadingPage from "@/components/common/LoadingPage";
+import Alert from "@/components/common/Alert";
 
 export default function AuthContainer() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState<{
+    type: "success" | "error" | "warning";
+    message: string;
+  } | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
   const {
@@ -45,7 +50,10 @@ export default function AuthContainer() {
 
   const handleSignUp = async (data: FormDataSignUp) => {
     const errorMessage = validateSignUp(data);
-    if (errorMessage) return alert(errorMessage);
+    if (errorMessage) {
+      setAlert({ type: "error", message: errorMessage });
+      return;
+    }
 
     try {
       const result = await userService.createUser({
@@ -55,11 +63,17 @@ export default function AuthContainer() {
       });
       const user = (result as { data: UserModel }).data;
       if (user) {
+        setAlert({
+          type: "success",
+          message: "Sign-up successful! Your account has been created.",
+        });
         setIsSignUp(false);
-        alert("Sign-up successful!");
       }
     } catch {
-      alert("Sign-up failed.");
+      setAlert({
+        type: "error",
+        message: "Sign-up failed. Please try again.",
+      });
     }
   };
 
@@ -72,13 +86,18 @@ export default function AuthContainer() {
       });
 
       if (result?.error) {
-        alert(`Login failed: ${result.error}`);
+        setAlert({ type: "error", message: `Login failed: ${result.error}` });
       } else {
-        alert("Login successful!");
-        router.push("/");
+        setAlert({
+          type: "success",
+          message: "Sign-in successful! You are now logged in.",
+        });
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       }
     } catch {
-      alert("Login failed.");
+      setAlert({ type: "error", message: `Login failed` });
     }
   };
 
@@ -91,7 +110,10 @@ export default function AuthContainer() {
         await handleLogin(data);
       }
     } catch {
-      alert("Error during authentication:");
+      setAlert({
+        type: "error",
+        message: `An error occurred while processing your request. Please try again.`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -100,7 +122,8 @@ export default function AuthContainer() {
   return (
     <>
       <LoadingPage isLoading={isLoading} />
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      {alert && <Alert type={alert.type} message={alert.message} />}
+      <div className="flex items-center justify-center min-height-screen bg-gray-100">
         <div className="bg-white p-6 rounded-lg shadow-md w-96">
           <h2 className="text-2xl font-semibold text-center text-gray-700">
             {isSignUp ? "Sign Up" : "Login"}
