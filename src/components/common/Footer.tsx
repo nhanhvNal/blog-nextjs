@@ -7,7 +7,7 @@ const socialLinks = [
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-blue-500 to-teal-400 text-white py-8">
-      <div className="max-w-7xl mx-auto px-6 text-center">
+      <div className="max-w-9xl mx-auto px-6 text-center">
         <p className="text-sm mb-4">
           &copy; {new Date().getFullYear()} My Blog. All rights reserved.
         </p>

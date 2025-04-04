@@ -19,7 +19,7 @@ export default async function PostsContainer() {
         <title>List of Posts</title>
         <meta name="description" content="List of Posts." />
       </Head>
-      <main className="flex-grow max-w-7xl mx-auto py-10 px-6">
+      <main className="flex-grow max-w-9xl mx-auto py-10 px-6">
         <h2 className="text-4xl font-bold text-center mb-6">List of Posts</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

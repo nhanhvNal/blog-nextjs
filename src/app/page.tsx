@@ -5,18 +5,18 @@ import { PostModel } from "@/types/blog.model";
 import BlogCard from "@/components/common/BlogCard";
 
 export default async function HomeContainer() {
-  const { data } = await postService.index({ _limit: 3 });
+  const { data } = await postService.index({ _limit: 4 });
   if (!data) return null;
 
   const posts = data as unknown as PostModel[];
 
   return (
     <div className="bg-gray-50 min-height-screen">
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="max-w-9xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
           Latest Posts
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-8">
           {posts?.map((post) => (
             <BlogCard key={post.id} post={post} />
           ))}

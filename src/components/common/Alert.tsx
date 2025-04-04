@@ -80,7 +80,7 @@ const Alert: React.FC<AlertProps> = ({
 
   return (
     <div
-      className={`flex items-center z-40 absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800 ${bg} ${text}`}
+      className={`flex items-center z-50 absolute top-0 left-1/2 transform -translate-x-1/2 w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800 ${bg} ${text}`}
       role="alert"
     >
       <div className="inline-flex items-center justify-center shrink-0 w-8 h-8">

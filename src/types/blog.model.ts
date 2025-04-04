@@ -17,6 +17,10 @@ export interface CreatePostData {
   content: string;
   image: string;
   tags: string[];
+  date: string;
+  authorAvatar: string;
+  author: string;
+  readingTime: string;
 }
 
 export interface UpdatePostData extends CreatePostData {

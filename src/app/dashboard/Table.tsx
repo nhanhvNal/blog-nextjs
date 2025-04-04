@@ -33,7 +33,7 @@ const Table: React.FC<TableProps> = ({ posts, onEdit, onDelete }) => {
           </tr>
         </thead>
         <tbody>
-          {posts.map((post) => (
+          {posts?.map((post) => (
             <tr
               key={post.id}
               className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200"

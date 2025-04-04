@@ -22,3 +22,15 @@ export enum ThemeMode {
   DARK = "dark",
   LIGHT = "light",
 }
+
+export const POST_INITIAL = (session) => ({
+  title: "",
+  description: "",
+  content: "",
+  image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+  tags: [],
+  date: new Date().toDateString(),
+  authorAvatar: session?.user?.image || "",
+  author: session?.user?.name || "",
+  readingTime: `${Math.floor(Math.random() * 60) + 1} min`,
+});
