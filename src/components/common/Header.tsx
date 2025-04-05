@@ -5,9 +5,8 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import LoadingPage from "./LoadingPage";
 import Button from "./Button";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import HeroSection from "./HeroSection";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -23,9 +22,7 @@ const Header = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
-  const isHomePage = pathname === "/";
-  const heightHeader = isHomePage ? 342 : 64;
+  const heightHeader = 64;
 
   useEffect(() => {
     setIsScrolled(window.scrollY > heightHeader);
@@ -72,11 +69,7 @@ const Header = () => {
     <>
       <LoadingPage isLoading={isLoading} />
 
-      <div
-        className={`relative bg-gradient-to-r from-blue-600 to-teal-500 p text-center text-white overflow-hidden ${
-          isHomePage ? "py-20" : "py-8"
-        }`}
-      >
+      <div className="relative bg-gradient-to-r py-8 from-blue-600 to-teal-500 p text-center text-white overflow-hidden">
         <div
           className={`fixed top-3 left-1/2 transform -translate-x-1/2 w-full max-w-6xl px-6 flex justify-center items-center z-50 transition-all  ${
             isScrolled
@@ -142,7 +135,7 @@ const Header = () => {
               {isDropdownOpen && session && (
                 <div
                   ref={dropdownRef}
-                  className="absolute z-50 top-8 right-0 mt-2 w-48 bg-white shadow-lg rounded-lg text-black transition-all transform opacity-0 animate-dropdown"
+                  className="absolute z-[2] top-8 right-0 mt-2 w-48 bg-white shadow-lg rounded-lg text-black transition-all transform opacity-0 animate-dropdown"
                   style={{
                     transform: "translateY(0)",
                     transition: "transform 0.3s ease, opacity 0.3s ease",
@@ -165,7 +158,7 @@ const Header = () => {
                       className="w-full"
                       label="Logout"
                       color="teal"
-                      onClick={() => signOut()}
+                      onClick={() => signOut({ callbackUrl: "/" })}
                     />
                   </div>
                 </div>
@@ -173,7 +166,6 @@ const Header = () => {
             </div>
           </div>
         </div>
-        {isHomePage && <HeroSection />}
       </div>
     </>
   );

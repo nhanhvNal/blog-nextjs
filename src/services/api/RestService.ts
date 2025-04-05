@@ -12,7 +12,7 @@ export default class RestService<T = any> {
   constructor(protected axios: AxiosInstance, protected resource: string) {}
 
   index<R = T>(params?: ApiRequestParams) {
-    return this.axios.get<ApiResponseData<R[]>>(`${this.resource}`, { params });
+    return this.axios.get<R[]>(`${this.resource}`, { params });
   }
 
   show<R = T>(id: string, params: ApiRequestParams = {}) {

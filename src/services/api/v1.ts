@@ -24,6 +24,7 @@ export default class V1 {
 
   async getAccessToken() {
     const session = await getSession();
+
     if (session?.access_token) {
       return `Bearer ${session?.access_token}`;
     }

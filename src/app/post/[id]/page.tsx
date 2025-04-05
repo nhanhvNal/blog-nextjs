@@ -1,42 +1,120 @@
-import { postService } from "@/services/api";
+import { ResolvingMetadata } from "next";
+import { notFound } from "next/navigation";
 import { PostModel } from "@/types/blog.model";
-import Image from "next/image";
+import { commentService, postService } from "@/services/api";
+import PostContent from "../PostContent";
+import RelatedPosts from "../RelatedPosts";
+import Seo from "@/components/Seo";
+import CommentForm from "../CommentForm";
+import CommentList from "../CommentList";
+import { CommentModel } from "@/types/comment.model";
 
-async function getBlogDetail(id: string): Promise<PostModel> {
-  const { data: postDetail } = await postService.show(id);
+export async function generateMetadata({ params }, parent: ResolvingMetadata) {
+  const { id } = await params;
+  try {
+    const [post, comments] = await Promise.all([getPost(id), getComments()]);
 
-  if (!postDetail) return null;
+    if (!post) {
+      return {
+        title: "Post Not Found",
+        description: "The requested article could not be found.",
+      };
+    }
 
-  return postDetail as unknown as PostModel;
+    const previousImages = (await parent).openGraph?.images || [];
+
+    return [
+      {
+        title: post.title,
+        description: post.description || post.content.substring(0, 155),
+        openGraph: {
+          title: post.title,
+          description: post.description || post.content.substring(0, 155),
+          type: "article",
+          publishedTime: post.date,
+          images: post.image ? [post.image, ...previousImages] : previousImages,
+        },
+        twitter: {
+          card: "summary_large_image",
+          title: post.title,
+          description: post.description || post.content.substring(0, 155),
+          images: post.image ? [post.image] : [],
+        },
+      },
+      comments,
+    ];
+  } catch {
+    return {
+      title: "Blog Post",
+      description: "Read our latest article",
+    };
+  }
 }
 
-export default async function PostDetailPage({
-  params,
-}: Readonly<{
-  params;
-}>) {
-  const post = await getBlogDetail(params.id);
-
-  if (!post) {
-    return <h1 className="text-center text-red-500">Bài viết không tồn tại</h1>;
+async function getPost(id: string): Promise<PostModel | null> {
+  try {
+    return (await postService.show<PostModel>(id)).data as unknown as PostModel;
+  } catch {
+    return null;
   }
+}
+
+async function getComments(): Promise<CommentModel[] | null> {
+  try {
+    const res = await commentService.index<CommentModel>({});
+
+    return res.data;
+  } catch {
+    return null;
+  }
+}
+
+async function getRelatedPosts(excludeId: string): Promise<PostModel[]> {
+  try {
+    const { data } = await postService.index({ _limit: 3 });
+
+    if (!data) return [];
+
+    const posts: PostModel[] = data as unknown as PostModel[];
+    return posts.filter((post) => post.id !== excludeId);
+  } catch {
+    return [];
+  }
+}
+
+export default async function PostDetailPage({ params }) {
+  const { id } = await params;
+  const [post, comments] = await Promise.all([getPost(id), getComments()]);
+
+  if (!post) notFound();
+
+  const relatedPosts = await getRelatedPosts(post.id);
 
   return (
-    <div className="flex-grow max-w-4xl mx-auto py-10 px-6">
-      <h1 className="text-4xl font-bold text-gray-900">{post.title}</h1>
-      <p className="text-gray-500 mt-2">{post.date}</p>
+    <>
+      <Seo
+        title={post.title}
+        description={post.description || post.content?.substring(0, 155)}
+        image={post.image}
+        url={`http://localhost:3000/posts/${post.id}`}
+      />
+      <main className="container mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        <article className="max-w-9xl mx-auto">
+          <PostContent post={post} />
+        </article>
 
-      <div className="mt-6 justify-center flex">
-        <Image
-          src={post.image}
-          alt={post.title}
-          width={800}
-          height={400}
-          className="rounded-lg"
-        />
-      </div>
+        <CommentForm />
+        <CommentList comments={comments} />
 
-      <p className="mt-6 text-lg text-gray-700">{post.content}</p>
-    </div>
+        {relatedPosts.length > 0 && (
+          <section className="max-w-9xl mx-auto mt-16">
+            <h2 className="text-3xl font-bold mb-8 text-center">
+              Related Posts
+            </h2>
+            <RelatedPosts posts={relatedPosts} />
+          </section>
+        )}
+      </main>
+    </>
   );
 }

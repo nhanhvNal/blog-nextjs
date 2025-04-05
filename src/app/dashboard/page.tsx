@@ -24,7 +24,7 @@ export const fetchPosts = async () => {
 const Dashboard = () => {
   const router = useRouter();
   const [posts, setPosts] = useState<PostModel[]>([]);
-  const [alert, setAlert] = useState<{
+  const [toast, setToast] = useState<{
     type: "success" | "error" | "warning";
     message: string;
   } | null>(null);
@@ -40,7 +40,7 @@ const Dashboard = () => {
         setPosts(data as unknown as PostModel[]);
       } catch (err: unknown) {
         if (err instanceof Error) {
-          setAlert({
+          setToast({
             type: "error",
             message: err.message,
           });
@@ -72,11 +72,11 @@ const Dashboard = () => {
     try {
       await deletePost(postToDelete.id);
 
-      setAlert({ type: "success", message: "Deleted post successfully" });
+      setToast({ type: "success", message: "Deleted post successfully" });
 
       await refreshPosts();
     } catch (err) {
-      setAlert({
+      setToast({
         type: "warning",
         message: err instanceof Error ? err.message : "An error occurred",
       });
@@ -109,7 +109,7 @@ const Dashboard = () => {
   return (
     <>
       <LoadingPage isLoading={isLoading} />
-      {alert && <Alert type={alert.type} message={alert.message} />}
+      {toast && <Alert type={toast.type} message={toast.message} />}
       <div className="p-6 bg-gray-50 min-height-screen">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-semibold text-gray-800">

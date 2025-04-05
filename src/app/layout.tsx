@@ -1,6 +1,6 @@
 import Header from "@/components/common/Header";
 import "./globals.css";
-import '../assets/css/main.css';
+import "../assets/css/main.css";
 import SessionProvider from "@/shared/providers/SessionProvider";
 import Footer from "@/components/common/Footer";
 

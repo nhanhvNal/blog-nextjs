@@ -1,35 +1,60 @@
-import Link from "next/link";
-
-import { postService } from "@/services/api";
 import { PostModel } from "@/types/blog.model";
-import BlogCard from "@/components/common/BlogCard";
+import Sidebar from "@/components/Sidebar";
+import FeaturedPosts from "@/components/home/FeaturedPosts";
+import LatestPosts from "@/components/home/LatestPosts";
+import Testimonials from "@/components/home/Testimonials";
+import Seo from "@/components/Seo";
+import Slider from "@/components/Slider";
+import { SLIDER_DATA } from "@/shared/constants/slider";
+
+export async function getFeaturedPosts(): Promise<PostModel[]> {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/posts?_sort=date&_order=desc&_limit=4`
+    );
+    if (!res.ok) {
+      throw new Error("Failed to fetch featured posts");
+    }
+    const data = await res.json();
+    return data as PostModel[];
+  } catch (error) {
+    console.error("Error fetching featured posts:", error);
+    return [];
+  }
+}
 
 export default async function HomeContainer() {
-  const { data } = await postService.index({ _limit: 4 });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts?_limit=4`, {
+    cache: "force-cache",
+    next: { revalidate: 10 },
+  });
+
+  const data = await res.json();
+
+  const featuredPosts = await getFeaturedPosts();
   if (!data) return null;
 
   const posts = data as unknown as PostModel[];
 
   return (
-    <div className="bg-gray-50 min-height-screen">
-      <div className="max-w-9xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-10">
-          Latest Posts
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-8">
-          {posts?.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Link
-            href="/post"
-            className="bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-blue-600 transition-all"
-          >
-            View All Posts
-          </Link>
-        </div>
+    <div className="bg-gray-50 min-h-screen">
+      <Seo
+        title="Latest Posts | Your Blog Name"
+        description="Explore the latest blog posts from our community."
+        url="http:localhost:3000"
+      />
+      <Slider slides={SLIDER_DATA} />
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-12">
+        <main className="md:col-span-3">
+          <LatestPosts posts={posts} />
+        </main>
+        <aside className="md:col-span-1">
+          <Sidebar />
+        </aside>
+      </div>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <FeaturedPosts featuredPosts={featuredPosts} />
+        <Testimonials />
       </div>
     </div>
   );
