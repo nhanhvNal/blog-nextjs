@@ -1,19 +1,15 @@
-import { getSession } from "next-auth/react";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const token = req.cookies.get("next-auth.session-token")?.value;
+  const authHeader = req.headers.get("authorization");
 
   if (token) {
     return NextResponse.next();
   }
 
-  const authHeader = req.headers.get("authorization");
-
-  const session = await getSession();
-
-  if (!session && !!authHeader) {
+  if (!token && !!authHeader) {
     const url = req.nextUrl.clone();
     url.pathname = "/login";
 
@@ -32,7 +28,7 @@ export async function middleware(req: NextRequest) {
       ) {
         return NextResponse.next();
       }
-    } catch (error) {
+    } catch {
       console.error("Invalid Authorization header format");
     }
   }
@@ -47,6 +43,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard"],
+  matcher: ["/dashboard/:path*"],
   missing: [{ source: "/api/auth/:path*" }],
 };

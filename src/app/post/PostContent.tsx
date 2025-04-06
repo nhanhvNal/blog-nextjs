@@ -1,8 +1,10 @@
 import { PostModel } from "@/types/blog.model";
+import Image from "next/image";
 
 interface PostContentProps {
   post: PostModel;
 }
+
 function renderPostContent(content: string | null) {
   if (!content) {
     return (
@@ -11,8 +13,8 @@ function renderPostContent(content: string | null) {
   }
 
   if (typeof content === "string") {
-    return content.split("\n\n").map((paragraph, idx) => (
-      <p key={idx} className="text-lg">
+    return content.split("\n\n").map((paragraph) => (
+      <p key={paragraph.slice(0, 20)} className="text-lg">
         {paragraph}
       </p>
     ));
@@ -27,7 +29,7 @@ export default function PostContent({ post }: Readonly<PostContentProps>) {
       <div className="flex flex-col items-center justify-center h-[50vh]">
         <h1 className="text-2xl font-semibold text-red-500">Post not found</h1>
         <p className="text-gray-500 mt-2">
-          The article you're looking for doesn't exist.
+          The article you are looking for does not exist.
         </p>
       </div>
     );
@@ -49,7 +51,9 @@ export default function PostContent({ post }: Readonly<PostContentProps>) {
       {post.image && (
         <figure className="my-8">
           <div className="overflow-hidden rounded-xl shadow-lg">
-            <img
+            <Image
+              width={800}
+              height={400}
               src={post.image}
               alt={post.title}
               className="w-full object-cover transition-transform hover:scale-105 duration-500"

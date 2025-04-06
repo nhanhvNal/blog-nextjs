@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FaArrowLeft } from "react-icons/fa";
@@ -154,4 +154,10 @@ const CreateEditPost: React.FC = () => {
   );
 };
 
-export default CreateEditPost;
+const SuspendedCreateEditPost = () => (
+  <Suspense fallback={<LoadingPage isLoading={true} />}>
+    <CreateEditPost />
+  </Suspense>
+);
+
+export default SuspendedCreateEditPost;

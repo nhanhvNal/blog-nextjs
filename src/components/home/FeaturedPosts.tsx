@@ -5,7 +5,7 @@ interface FeaturedPostsProps {
   featuredPosts: PostModel[];
 }
 
-const FeaturedPosts = ({ featuredPosts }: FeaturedPostsProps) => {
+const FeaturedPosts = ({ featuredPosts = [] }: FeaturedPostsProps) => {
   return (
     <section className="bg-white py-16">
       <div className="max-w-7xl mx-auto px-6">
@@ -13,9 +13,8 @@ const FeaturedPosts = ({ featuredPosts }: FeaturedPostsProps) => {
           Featured Posts
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {featuredPosts.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
+          {featuredPosts?.length > 0 &&
+            featuredPosts.map((post) => <BlogCard key={post.id} post={post} />)}
         </div>
       </div>
     </section>

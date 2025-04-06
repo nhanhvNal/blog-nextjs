@@ -6,35 +6,29 @@ import Testimonials from "@/components/home/Testimonials";
 import Seo from "@/components/Seo";
 import Slider from "@/components/Slider";
 import { SLIDER_DATA } from "@/shared/constants/slider";
+import { postService } from "@/services/api";
 
-export async function getFeaturedPosts(): Promise<PostModel[]> {
+async function getFeaturedPosts(): Promise<{ data: PostModel[] }> {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/posts?_sort=date&_order=desc&_limit=4`
-    );
-    if (!res.ok) {
-      throw new Error("Failed to fetch featured posts");
-    }
-    const data = await res.json();
-    return data as PostModel[];
-  } catch (error) {
-    console.error("Error fetching featured posts:", error);
-    return [];
+    return await postService.index({
+      _sort: "date",
+      _order: "desc",
+      _limit: 4,
+    });
+  } catch {
+    throw new Error("An unknown error occurred");
   }
 }
 
 export default async function HomeContainer() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts?_limit=4`, {
-    cache: "force-cache",
-    next: { revalidate: 10 },
-  });
+  const posts = (
+    await postService.index({
+      cache: "force-cache",
+      _limit: 4,
+    })
+  ).data;
 
-  const data = await res.json();
-
-  const featuredPosts = await getFeaturedPosts();
-  if (!data) return null;
-
-  const posts = data as unknown as PostModel[];
+  const { data: featuredPosts } = await getFeaturedPosts();
 
   return (
     <div className="bg-gray-50 min-h-screen">

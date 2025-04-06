@@ -12,10 +12,9 @@ import Button from "@/components/common/Button";
 import LoadingPage from "@/components/common/LoadingPage";
 import Modal from "@/components/common/Modal";
 
-export const fetchPosts = async () => {
+const fetchPosts = async () => {
   try {
-    const response = await postService.index();
-    return response;
+    return await postService.index();
   } catch (err) {
     throw new Error(err);
   }

@@ -2,6 +2,7 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay, EffectFade } from "swiper/modules";
+import Image from "next/image";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -36,7 +37,9 @@ export default function Slider({ slides }: Readonly<SliderProps>) {
         {slides.map((slide, idx) => (
           <SwiperSlide key={slide.id + idx}>
             <div className="relative w-full h-full">
-              <img
+              <Image
+                width={1920}
+                height={1080}
                 src={slide.image}
                 alt={slide.title || `Slide ${idx + 1}`}
                 className="w-full h-full object-cover"

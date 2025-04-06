@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PostModel } from "@/types/blog.model";
 
 interface RelatedPostsProps {
@@ -16,7 +17,9 @@ export default function RelatedPosts({ posts }: Readonly<RelatedPostsProps>) {
           <Link href={`/post/${post.id}`} className="block">
             {post.image && (
               <div className="overflow-hidden">
-                <img
+                <Image
+                  width={400}
+                  height={200}
                   src={post.image}
                   alt={post.title}
                   className="w-full h-48 object-cover transition-transform duration-300 hover:scale-105"

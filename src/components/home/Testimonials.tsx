@@ -1,4 +1,3 @@
- 
 const Testimonials = () => {
   return (
     <section className="bg-gray-100 py-16">
@@ -9,15 +8,15 @@ const Testimonials = () => {
         <div className="flex space-x-8 justify-center">
           <div className="bg-white shadow-lg rounded-lg p-6 w-1/3">
             <p className="text-gray-600">
-              "This blog is amazing! I always look forward to reading new posts.
-              Keep up the great work!"
+              &quot;This blog is amazing! I always look forward to reading new
+              posts. Keep up the great work!&quot;
             </p>
             <p className="mt-4 font-semibold text-blue-500">Jane Doe</p>
           </div>
           <div className="bg-white shadow-lg rounded-lg p-6 w-1/3">
             <p className="text-gray-600">
-              "As a fellow writer, I find this blog to be an inspiring resource.
-              Thank you for sharing your insights!"
+              &quot;As a fellow writer, I find this blog to be an inspiring
+              resource. Thank you for sharing your insights!&quot;
             </p>
             <p className="mt-4 font-semibold text-blue-500">John Smith</p>
           </div>
