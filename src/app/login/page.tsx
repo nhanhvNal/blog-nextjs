@@ -36,22 +36,26 @@ export default function AuthContainer() {
     }
   }, [session, router]);
 
+  const showAlert = (
+    type: "success" | "error" | "warning",
+    message: string
+  ) => {
+    setAlert({ type, message });
+  };
+
   const validateSignUp = (formData: FormDataSignUp): string | null => {
     if (!formData.email?.includes("@")) return "Invalid email.";
-
     if (formData.password && formData.password.length < 6)
       return "Password must be at least 6 characters.";
-
     if (formData.password !== formData.confirmPassword)
       return "Passwords do not match.";
-
     return null;
   };
 
   const handleSignUp = async (data: FormDataSignUp) => {
     const errorMessage = validateSignUp(data);
     if (errorMessage) {
-      setAlert({ type: "error", message: errorMessage });
+      showAlert("error", errorMessage);
       return;
     }
 
@@ -63,17 +67,14 @@ export default function AuthContainer() {
       });
       const user = (result as { data: UserModel }).data;
       if (user) {
-        setAlert({
-          type: "success",
-          message: "Sign-up successful! Your account has been created.",
-        });
+        showAlert(
+          "success",
+          "Sign-up successful! Your account has been created."
+        );
         setIsSignUp(false);
       }
     } catch {
-      setAlert({
-        type: "error",
-        message: "Sign-up failed. Please try again.",
-      });
+      showAlert("error", "Sign-up failed. Please try again.");
     }
   };
 
@@ -86,18 +87,15 @@ export default function AuthContainer() {
       });
 
       if (result?.error) {
-        setAlert({ type: "error", message: `Login failed: ${result.error}` });
+        showAlert("error", `Login failed: ${result.error}`);
       } else {
-        setAlert({
-          type: "success",
-          message: "Sign-in successful! You are now logged in.",
-        });
+        showAlert("success", "Sign-in successful! You are now logged in.");
         setTimeout(() => {
           router.push("/");
         }, 2000);
       }
     } catch {
-      setAlert({ type: "error", message: `Login failed` });
+      showAlert("error", "Login failed. Please try again.");
     }
   };
 
@@ -110,10 +108,10 @@ export default function AuthContainer() {
         await handleLogin(data);
       }
     } catch {
-      setAlert({
-        type: "error",
-        message: `An error occurred while processing your request. Please try again.`,
-      });
+      showAlert(
+        "error",
+        "An error occurred while processing your request. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }

@@ -6,14 +6,8 @@ import { useState, useRef, useEffect } from "react";
 import LoadingPage from "./LoadingPage";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/post", label: "Post" },
-  { href: "/about", label: "About Us" },
-  { href: "/contact", label: "Get in Touch" },
-];
+import Navbar from "./Navbar";
+import UserAvatar from "./UserAvatar";
 
 const Header = () => {
   const { data: session } = useSession();
@@ -87,42 +81,14 @@ const Header = () => {
                 Tech Insights Blog
               </Link>
             </div>
-            <nav>
-              <ul className="flex space-x-10">
-                {navLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-white hover:text-yellow-300 transition-all duration-300 font-semibold"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
+            <Navbar />
             <div className="flex items-center space-x-4 relative">
               {session ? (
-                <button
+                <UserAvatar
+                  imageUrl={session.user?.image}
+                  name={session.user?.name}
                   onClick={toggleDropdown}
-                  className="flex items-center space-x-2 bg-white text-blue-500 rounded-full shadow-md hover:shadow-lg transition-all duration-300"
-                >
-                  {session.user?.image ? (
-                    <Image
-                      width={32}
-                      height={32}
-                      src={session.user?.image}
-                      alt="User Avatar"
-                      className="w-8 h-8 rounded-full"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-                      <span className="text-white text-lg">
-                        {session.user?.name?.[0]}
-                      </span>
-                    </div>
-                  )}
-                </button>
+                />
               ) : (
                 <button
                   onClick={handleLogin}

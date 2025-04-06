@@ -14,9 +14,10 @@ import Modal from "@/components/common/Modal";
 
 const fetchPosts = async () => {
   try {
-    return await postService.index();
-  } catch (err) {
-    throw new Error(err);
+    const { data } = await postService.index();
+    return data;
+  } catch {
+    throw new Error("Failed to fetch posts");
   }
 };
 
@@ -32,33 +33,30 @@ const Dashboard = () => {
   const [postToDelete, setPostToDelete] = useState<PostModel | null>(null);
 
   useEffect(() => {
-    const getPosts = async () => {
+    const loadPosts = async () => {
       setIsLoading(true);
       try {
-        const { data } = await fetchPosts();
-        setPosts(data as unknown as PostModel[]);
-      } catch (err: unknown) {
-        if (err instanceof Error) {
-          setToast({
-            type: "error",
-            message: err.message,
-          });
-        }
-        throw new Error("An error occurred while retrieving posts data.");
+        const data = await fetchPosts();
+        setPosts(data);
+      } catch (err) {
+        setToast({
+          type: "error",
+          message: err instanceof Error ? err.message : "An error occurred",
+        });
       } finally {
         setIsLoading(false);
       }
     };
-
-    getPosts();
+    loadPosts();
   }, []);
 
   const handleDelete = useCallback(
     (id: string) => {
       const post = posts.find((post) => post.id === id);
-      if (!post) return;
-      setPostToDelete(post);
-      setShowModal(true);
+      if (post) {
+        setPostToDelete(post);
+        setShowModal(true);
+      }
     },
     [posts]
   );
@@ -67,12 +65,9 @@ const Dashboard = () => {
     if (!postToDelete) return;
 
     setIsLoading(true);
-
     try {
-      await deletePost(postToDelete.id);
-
-      setToast({ type: "success", message: "Deleted post successfully" });
-
+      await postService.destroy(postToDelete.id);
+      setToast({ type: "success", message: "Post deleted successfully" });
       await refreshPosts();
     } catch (err) {
       setToast({
@@ -84,13 +79,9 @@ const Dashboard = () => {
     }
   }, [postToDelete]);
 
-  const deletePost = async (id: string) => {
-    await postService.destroy(id);
-  };
-
   const refreshPosts = async () => {
-    const { data } = await fetchPosts();
-    setPosts(data as unknown as PostModel[]);
+    const data = await fetchPosts();
+    setPosts(data);
   };
 
   const closeModal = () => {
