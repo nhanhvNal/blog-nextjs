@@ -31,7 +31,7 @@ export const usePost = (postId: string | null) => {
       try {
         const postData = await fetchPost(postId);
         setPost(postData);
-      } catch (err) {
+      } catch {
         setAlert({ type: "error", message: "Can't get list posts" });
       } finally {
         setIsLoading(false);
@@ -41,5 +41,5 @@ export const usePost = (postId: string | null) => {
     getPost();
   }, [postId]);
 
-  return { post, isLoading, alert, setAlert,setIsLoading };
+  return { post, isLoading, alert, setAlert, setIsLoading };
 };

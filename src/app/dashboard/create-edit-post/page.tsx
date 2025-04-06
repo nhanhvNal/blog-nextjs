@@ -62,7 +62,7 @@ const CreateEditPost: React.FC = () => {
       });
 
       setTimeout(() => setAlert(null), 3000);
-    } catch (err) {
+    } catch {
       setAlert({
         type: "error",
         message: "Error saving post.",
@@ -75,7 +75,7 @@ const CreateEditPost: React.FC = () => {
   const createPost = async (data: CreatePostData) => {
     try {
       await postService.create(data);
-    } catch (err) {
+    } catch {
       throw new Error("Error creating post.");
     }
   };
@@ -83,7 +83,7 @@ const CreateEditPost: React.FC = () => {
   const updatePost = async (id: string, data: CreatePostData) => {
     try {
       await postService.update(id, data);
-    } catch (err) {
+    } catch {
       throw new Error("Error updating post.");
     }
   };
