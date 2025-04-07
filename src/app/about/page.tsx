@@ -1,7 +1,50 @@
-import Image from 'next/image';
-import React from 'react';
+import Image from "next/image";
+import { Metadata } from "next";
+import { aboutService } from "@/services/api";
+import { AboutModel } from "@/types/about.model";
 
-const About: React.FC = () => {
+async function fetchPageData(): Promise<AboutModel> {
+  const res = await aboutService.index<AboutModel>({
+    next: { revalidate: 10 },
+  });
+
+  return res.data as unknown as AboutModel;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { profile } = await fetchPageData();
+
+  const title = profile.name;
+  const description = profile.description;
+  const image = profile.image;
+  const url = `${process.env.NEXTAUTH_URL}/about`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url,
+      images: [{ url: image }],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+    },
+    metadataBase: new URL(`${process.env.NEXTAUTH_URL}`),
+    alternates: {
+      canonical: url,
+    },
+  };
+}
+
+export default async function AboutPage() {
+  const aboutData = await fetchPageData();
+
   return (
     <div className="bg-gray-50 min-height-screen">
       <div className="py-8">
@@ -17,56 +60,42 @@ const About: React.FC = () => {
               <Image
                 width={300}
                 height={300}
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+                src={aboutData.profile.image}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
             </div>
             <div>
-              <h2 className="text-2xl font-bold mb-2">John Doe</h2>
+              <h2 className="text-2xl font-bold mb-2">
+                {aboutData.profile.name}
+              </h2>
               <p className="text-blue-600 font-medium mb-4">
-                Writer & Content Creator
+                {aboutData.profile.title}
               </p>
-              <p className="text-gray-600">
-                Passionate about storytelling, technology, and the intersection
-                of creativity and innovation. I&apos;ve been writing for over 10
-                years and love sharing insights about life, work, and personal
-                growth.
-              </p>
+              <p className="text-gray-600">{aboutData.profile.description}</p>
             </div>
           </div>
 
           <div className="prose max-w-none text-gray-700">
-            <h3 className="text-xl font-semibold mb-4">My Story</h3>
-            <p className="mb-4">
-              I started this blog as a way to document my journey and share what
-              I&apos;ve learned along the way. With a background in technology
-              and a love for creative writing, I found my passion in creating
-              content that helps others navigate their own paths.
-            </p>
-            <p className="mb-4">
-              When I&apos;m not writing, you can find me hiking in the
-              mountains, experimenting with new recipes, or getting lost in a
-              good book. I believe in continuous learning and pushing beyond
-              comfort zones.
-            </p>
-            <h3 className="text-xl font-semibold mb-4 mt-8">My Mission</h3>
-            <p className="mb-4">
-              My goal is to create content that inspires, educates, and
-              entertains. I believe in the power of storytelling to connect
-              people and ideas, and I&apos;m committed to sharing authentic
-              experiences that resonate with readers.
-            </p>
-            <p>
-              Thank you for visiting my blog. I hope you find something valuable
-              here, and I look forward to connecting with you through my
-              writing.
-            </p>
+            <h3 className="text-xl font-semibold mb-4">
+              {aboutData.story.title}
+            </h3>
+            {aboutData.story.content.map((paragraph, index) => (
+              <p key={index} className="mb-4">
+                {paragraph}
+              </p>
+            ))}
+            <h3 className="text-xl font-semibold mb-4 mt-8">
+              {aboutData.mission.title}
+            </h3>
+            {aboutData.mission.content.map((paragraph, index) => (
+              <p key={index} className="mb-4">
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default About;
+}

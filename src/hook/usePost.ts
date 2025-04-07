@@ -34,7 +34,9 @@ export const usePost = (postId: string | null) => {
       } catch {
         setAlert({ type: "error", message: "Can't get list posts" });
       } finally {
-        setIsLoading(false);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
       }
     };
 

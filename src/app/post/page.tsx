@@ -1,33 +1,42 @@
-import Head from "next/head";
-import { PostModel } from "@/types/blog.model";
-import BlogCard from "@/components/common/BlogCard";
+import PostList from "./PostList";
 
-export default async function PostsContainer() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-    cache: "force-cache",
-    next: { revalidate: 10 },
-  });
+const fetchPosts = async () => {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const data = await res.json();
+    return data;
+  } catch {
+    return [];
+  }
+};
 
-  const data = await res.json();
-  if (!data) return null;
+import type { Metadata } from "next";
 
-  const posts = data as unknown as PostModel[];
+export const generateMetadata = async (): Promise<Metadata> => {
+  return {
+    title: "Danh sách bài viết | My Blog",
+    description: "Khám phá các bài viết mới nhất từ chúng tôi.",
+    openGraph: {
+      title: "Danh sách bài viết | My Blog",
+      description: "Khám phá các bài viết mới nhất từ chúng tôi.",
+      url: `${process.env.NEXTAUTH_URL}/post`,
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Danh sách bài viết | My Blog",
+      description: "Khám phá các bài viết mới nhất từ chúng tôi.",
+    },
+    alternates: {
+      canonical: "/post",
+    },
+  };
+};
 
-  return (
-    <div className="flex flex-col min-height-screen">
-      <Head>
-        <title>List of Posts</title>
-        <meta name="description" content="List of Posts." />
-      </Head>
-      <main className="flex-grow max-w-9xl mx-auto py-10 px-6">
-        <h2 className="text-4xl font-bold text-center mb-6">List of Posts</h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {posts?.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
-        </div>
-      </main>
-    </div>
-  );
+export default async function Page() {
+  const posts = await fetchPosts();
+  return <PostList posts={posts} />;
 }

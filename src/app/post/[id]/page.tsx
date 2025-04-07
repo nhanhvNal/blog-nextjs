@@ -84,12 +84,13 @@ async function getRelatedPosts(excludeId: string): Promise<PostModel[]> {
 
 export default async function PostDetailPage({ params }) {
   const { id } = await params;
-  const [post, comments] = await Promise.all([getPost(id), getComments()]);
+  const [post, comments, relatedPosts] = await Promise.all([
+    getPost(id),
+    getComments(),
+    getRelatedPosts(id),
+  ]);
 
   if (!post) notFound();
-
-  const relatedPosts = await getRelatedPosts(post.id);
-
   return (
     <>
       <Seo

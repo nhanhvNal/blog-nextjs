@@ -1,22 +1,21 @@
 "use client";
 
-import React, { Suspense, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FaArrowLeft } from "react-icons/fa";
-
 import Alert from "@/components/common/Alert";
 import Button from "@/components/common/Button";
 import LoadingPage from "@/components/common/LoadingPage";
 import TagInput from "@/components/common/TagInput";
 import FormInput from "@/components/CreateEditPost/FormInput";
 import ImagePreview from "@/components/CreateEditPost/ImagePreview";
-import { postService } from "@/services/api";
-import { usePost } from "@/hook/usePost";
-import Link from "next/link";
 import { useForm } from "@/hook/useForm";
-import { CreatePostData } from "@/types/blog.model";
+import { usePost } from "@/hook/usePost";
+import { postService } from "@/services/api";
 import { POST_INITIAL } from "@/shared/constants";
+import { CreatePostData } from "@/types/blog.model";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { Suspense, useEffect } from "react";
+import { FaArrowLeft } from "react-icons/fa";
 
 const CreateEditPost: React.FC = () => {
   const { data: session } = useSession();
@@ -32,13 +31,30 @@ const CreateEditPost: React.FC = () => {
   useEffect(() => {
     if (post) {
       setTags(post.tags || []);
-      setFormData({
-        ...formData,
-        title: post.title || "",
-        description: post.description || "",
-        content: post.content || "",
-        image: post.image || "",
-        tags: post.tags || [],
+    }
+  }, [post]);
+
+  useEffect(() => {
+    if (post) {
+      setFormData((prevFormData) => {
+        const isChanged =
+          prevFormData.title !== post.title ||
+          prevFormData.description !== post.description ||
+          prevFormData.content !== post.content ||
+          prevFormData.image !== post.image ||
+          JSON.stringify(prevFormData.tags) !== JSON.stringify(post.tags);
+
+        if (isChanged) {
+          return {
+            ...prevFormData,
+            title: post.title || "",
+            description: post.description || "",
+            content: post.content || "",
+            image: post.image || "",
+            tags: post.tags || [],
+          };
+        }
+        return prevFormData;
       });
     }
   }, [post]);

@@ -16,7 +16,7 @@ export default class RestService<T = any> {
   }
 
   show<R = T>(id: string, params: ApiRequestParams = {}) {
-    return this.axios.get<ApiResponseData<R>>(`${this.resource}/${id}`, {
+    return this.axios.get<R>(`${this.resource}/${id}`, {
       params,
     });
   }

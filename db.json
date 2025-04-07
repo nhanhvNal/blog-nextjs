@@ -143,6 +143,34 @@
       ],
       "readingTime": "9 min",
       "authorAvatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330"
+    },
+    {
+      "title": "closeModal122222234",
+      "description": "closeModal",
+      "content": "closeModal",
+      "image": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+      "tags": [
+        "closeModal"
+      ],
+      "date": "Sun Apr 06 2025",
+      "authorAvatar": "https://lh3.googleusercontent.com/a/ACg8ocIUstqmObIeRSDl9n7gRUbrUJtK8xoMYxPIrmFxZ_9jRfzdvw=s96-c",
+      "author": "Hoàng Văn Nhân",
+      "readingTime": "58 min",
+      "id": "c259"
+    },
+    {
+      "id": "cc08",
+      "title": "sdasadasdad",
+      "description": "ddd",
+      "content": "ddd",
+      "image": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d",
+      "tags": [
+        "ddd"
+      ],
+      "date": "Sun Apr 06 2025",
+      "authorAvatar": "https://lh3.googleusercontent.com/a/ACg8ocIUstqmObIeRSDl9n7gRUbrUJtK8xoMYxPIrmFxZ_9jRfzdvw=s96-c",
+      "author": "Hoàng Văn Nhân",
+      "readingTime": "23 min"
     }
   ],
   "users": [
@@ -226,5 +254,27 @@
       "message": "Love your writing style!",
       "createdAt": 1743579452
     }
-  ]
+  ],
+  "about": {
+    "profile": {
+      "name": "John Doe",
+      "title": "Writer & Content Creator",
+      "description": "Passionate about storytelling, technology, and the intersection of creativity and innovation. I've been writing for over 10 years and love sharing insights about life, work, and personal growth.",
+      "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
+    },
+    "story": {
+      "title": "My Story",
+      "content": [
+        "I started this blog as a way to document my journey and share what I've learned along the way. With a background in technology and a love for creative writing, I found my passion in creating content that helps others navigate their own paths.",
+        "When I'm not writing, you can find me hiking in the mountains, experimenting with new recipes, or getting lost in a good book. I believe in continuous learning and pushing beyond comfort zones."
+      ]
+    },
+    "mission": {
+      "title": "My Mission",
+      "content": [
+        "My goal is to create content that inspires, educates, and entertains. I believe in the power of storytelling to connect people and ideas, and I'm committed to sharing authentic experiences that resonate with readers.",
+        "Thank you for visiting my blog. I hope you find something valuable here, and I look forward to connecting with you through my writing."
+      ]
+    }
+  }
 }

@@ -1,130 +1,45 @@
-"use client";
-
-import { postService } from "@/services/api";
-import { PostModel } from "@/types/blog.model";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { BiPlusCircle } from "react-icons/bi";
-
-import Table from "@/app/dashboard/Table";
-import Alert from "@/components/common/Alert";
-import Button from "@/components/common/Button";
-import LoadingPage from "@/components/common/LoadingPage";
-import Modal from "@/components/common/Modal";
+import { Metadata } from "next";
+import Dashboard from "./Dashboard";
 
 const fetchPosts = async () => {
   try {
-    const { data } = await postService.index();
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+      next: {
+        revalidate: 1,
+      },
+    });
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const data = await res.json();
     return data;
   } catch {
-    throw new Error("Failed to fetch posts");
+    return [];
   }
 };
 
-const Dashboard = () => {
-  const router = useRouter();
-  const [posts, setPosts] = useState<PostModel[]>([]);
-  const [toast, setToast] = useState<{
-    type: "success" | "error" | "warning";
-    message: string;
-  } | null>(null);
-  const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [postToDelete, setPostToDelete] = useState<PostModel | null>(null);
-
-  useEffect(() => {
-    const loadPosts = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchPosts();
-        setPosts(data);
-      } catch (err) {
-        setToast({
-          type: "error",
-          message: err instanceof Error ? err.message : "An error occurred",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadPosts();
-  }, []);
-
-  const handleDelete = useCallback(
-    (id: string) => {
-      const post = posts.find((post) => post.id === id);
-      if (post) {
-        setPostToDelete(post);
-        setShowModal(true);
-      }
+export const generateMetadata = async (): Promise<Metadata> => {
+  return {
+    title: "Danh sách bài viết | My Blog",
+    description: "Khám phá các bài viết mới nhất từ chúng tôi.",
+    openGraph: {
+      title: "Danh sách bài viết | My Blog",
+      description: "Khám phá các bài viết mới nhất từ chúng tôi.",
+      url: `${process.env.NEXTAUTH_URL}/post`,
+      type: "website",
     },
-    [posts]
-  );
-
-  const confirmDelete = useCallback(async () => {
-    if (!postToDelete) return;
-
-    setIsLoading(true);
-    try {
-      await postService.destroy(postToDelete.id);
-      setToast({ type: "success", message: "Post deleted successfully" });
-      await refreshPosts();
-    } catch (err) {
-      setToast({
-        type: "warning",
-        message: err instanceof Error ? err.message : "An error occurred",
-      });
-    } finally {
-      closeModal();
-    }
-  }, [postToDelete]);
-
-  const refreshPosts = async () => {
-    const data = await fetchPosts();
-    setPosts(data);
+    twitter: {
+      card: "summary_large_image",
+      title: "Danh sách bài viết | My Blog",
+      description: "Khám phá các bài viết mới nhất từ chúng tôi.",
+    },
+    alternates: {
+      canonical: "/post",
+    },
   };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setIsLoading(false);
-  };
-
-  const cancelDelete = () => setShowModal(false);
-
-  const handleAdd = () => router.push("/dashboard/create-edit-post");
-
-  const handleEdit = (id: string) =>
-    router.push(`/dashboard/create-edit-post?id=${id}`);
-
-  return (
-    <>
-      <LoadingPage isLoading={isLoading} />
-      {toast && <Alert type={toast.type} message={toast.message} />}
-      <div className="p-6 bg-gray-50 min-height-screen">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-semibold text-gray-800">
-            List of Posts
-          </h1>
-          <Button
-            color="green"
-            label="Add New Post"
-            className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition-all"
-            onClick={handleAdd}
-          >
-            <BiPlusCircle className="text-xl" />
-            Add New Post
-          </Button>
-        </div>
-        <Table posts={posts} onEdit={handleEdit} onDelete={handleDelete} />
-        <Modal
-          show={showModal}
-          onConfirm={confirmDelete}
-          onCancel={cancelDelete}
-          message={`Are you sure you want to delete this post: "${postToDelete?.title}"?`}
-        />
-      </div>
-    </>
-  );
 };
 
-export default Dashboard;
+export default async function DashboardSSG() {
+  const posts = await fetchPosts();
+  return <Dashboard posts={posts} />;
+}

@@ -4,7 +4,6 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/post", label: "Post" },
   { href: "/about", label: "About Us" },
-  { href: "/contact", label: "Get in Touch" },
 ];
 
 const Navbar = () => (
