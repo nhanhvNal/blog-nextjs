@@ -6,6 +6,7 @@ export enum ErrorCode {
 }
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
+export const API_AUTH_URL = process.env.NEXTAUTH_URL;
 
 export const ROUTE_PATHS = {
   HOME: "/",

@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { postService } from "@/services/api";
 import { PostModel } from "@/types/blog.model";
+import { API_AUTH_URL } from "@/shared/constants";
+const apiUrl = API_AUTH_URL ?? "http://localhost:3000";
 
 const fetchPost = async (id: string) => {
   try {
-    const response = await postService.show(id);
-    return response.data as unknown as PostModel;
+    const res = await fetch(`${apiUrl}/api/posts/${id}`);
+
+    if (!res.ok) throw new Error("Error when getting blog posts");
+
+    return res.json();
   } catch (err) {
     throw new Error(
       err instanceof Error ? err.message : "Error when get post."

@@ -1,14 +1,5 @@
+import { fetchPosts } from "@/shared/untils/api";
 import PostList from "./PostList";
-
-const fetchPosts = async () => {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
-    cache: "no-store",
-  }); 
-  
-
-  if (!res.ok) throw new Error("Error when getting blog posts");
-  return res.json();
-};
 
 import type { Metadata } from "next";
 
@@ -34,6 +25,10 @@ export const generateMetadata = async (): Promise<Metadata> => {
 };
 
 export default async function Page() {
-  const posts = await fetchPosts();
+  const posts = await fetchPosts({
+    limit: 100,
+    cache: "force-cache",
+    revalidate: 10,
+  });
   return <PostList posts={posts} />;
 }

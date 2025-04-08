@@ -8,7 +8,6 @@ import FormInput from "@/components/CreateEditPost/FormInput";
 import ImagePreview from "@/components/CreateEditPost/ImagePreview";
 import { useForm } from "@/hook/useForm";
 import { usePost } from "@/hook/usePost";
-import { postService } from "@/services/api";
 import { POST_INITIAL } from "@/shared/constants";
 import { CreatePostData } from "@/types/blog.model";
 import { useSession } from "next-auth/react";
@@ -83,19 +82,33 @@ const CreateEditPost: React.FC = () => {
   };
 
   const createPost = async (data: CreatePostData) => {
-    try {
-      await postService.create(data);
-    } catch {
-      throw new Error("Error creating post.");
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      throw new Error("Error creating post");
     }
+
+    const result = await res.json();
+    return result;
   };
 
   const updatePost = async (id: string, data: CreatePostData) => {
-    try {
-      await postService.update(id, data);
-    } catch {
-      throw new Error("Error updating post.");
+    const res = await fetch(`/api/posts/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      throw new Error("Error updating post");
     }
+
+    const result = await res.json();
+    return result;
   };
 
   const finalizeSubmission = () => {

@@ -1,9 +1,9 @@
-import { aboutService } from "@/services/api";
+import { commentService } from "@/services/api";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const res = await aboutService.index({
+    const res = await commentService.index({
       cache: "no-store",
     });
 

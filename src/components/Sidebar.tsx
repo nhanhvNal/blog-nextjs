@@ -1,4 +1,4 @@
-import { postService } from "@/services/api";
+import { fetchPosts } from "@/shared/untils/api";
 import { PostModel } from "@/types/blog.model";
 import Image from "next/image";
 import Link from "next/link";
@@ -12,11 +12,9 @@ const categories = [
   { name: "Business", href: "/category/business" },
 ];
 
-async function getPopularPosts(): Promise<{ data: PostModel[] }> {
+async function getPopularPosts() {
   try {
-    return await postService.index({
-      _limit: 2,
-    });
+    return await fetchPosts({ limit: 2, cache: "force-cache", revalidate: 10 });
   } catch {
     throw new Error("An unknown error occurred");
   }
@@ -86,7 +84,7 @@ const renderPopularPosts = ({
 );
 
 export default async function Sidebar() {
-  const { data: popularPosts } = await getPopularPosts();
+  const popularPosts = await getPopularPosts();
 
   return (
     <div className="space-y-8 mt-14">

@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
+export async function GET(req: NextRequest) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+    const { searchParams } = new URL(req.url);
+    const query = searchParams.toString();
+
+    const url = query ? `${API_BASE}/posts?${query}` : `${API_BASE}/posts`;
+    const res = await fetch(url, {
       cache: "no-store",
-      next: { revalidate: 10 },
     });
 
     if (!res.ok) {
@@ -18,7 +23,7 @@ export async function GET() {
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
     return NextResponse.json(
-      { error: error.message || "Error not defined" },
+      { error: (error as Error).message || "Unexpected error" },
       { status: 500 }
     );
   }
@@ -27,7 +32,6 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
       method: "POST",
       headers: {

@@ -69,7 +69,7 @@ export const authOptions = {
 };
 
 const checkUserIsExistFromApi = async (credentials) => {
-  return userService.index({
+  return await userService.index({
     email: credentials.email,
     password: credentials.password,
   });

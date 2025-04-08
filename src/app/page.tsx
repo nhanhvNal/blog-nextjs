@@ -1,4 +1,3 @@
-import { PostModel } from "@/types/blog.model";
 import Sidebar from "@/components/Sidebar";
 import FeaturedPosts from "@/components/home/FeaturedPosts";
 import LatestPosts from "@/components/home/LatestPosts";
@@ -6,29 +5,18 @@ import Testimonials from "@/components/home/Testimonials";
 import Seo from "@/components/Seo";
 import Slider from "@/components/Slider";
 import { SLIDER_DATA } from "@/shared/constants/slider";
-import { postService } from "@/services/api";
-
-async function getFeaturedPosts(): Promise<{ data: PostModel[] }> {
-  try {
-    return await postService.index({
-      _sort: "date",
-      _order: "desc",
-      _limit: 4,
-    });
-  } catch {
-    throw new Error("An unknown error occurred");
-  }
-}
+import { fetchPosts } from "@/shared/untils/api";
 
 export default async function HomeContainer() {
-  const posts = (
-    await postService.index({
-      cache: "force-cache",
-      _limit: 4,
-    })
-  ).data;
+  const posts = await fetchPosts({
+    order: "asc",
+    limit: 4,
+    cache: "no-store",
+  });
 
-  const { data: featuredPosts } = await getFeaturedPosts();
+  const featuredPosts = await fetchPosts({
+    sort: "date",
+  });
 
   return (
     <div className="bg-gray-50 min-h-screen">

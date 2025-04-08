@@ -1,13 +1,13 @@
 import { ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 import { PostModel } from "@/types/blog.model";
-import { commentService, postService } from "@/services/api";
 import PostContent from "../PostContent";
 import RelatedPosts from "../RelatedPosts";
 import Seo from "@/components/Seo";
 import CommentForm from "../CommentForm";
 import CommentList from "../CommentList";
 import { CommentModel } from "@/types/comment.model";
+import { fetchPosts } from "@/shared/untils/api";
 
 export async function generateMetadata({ params }, parent: ResolvingMetadata) {
   const { id } = await params;
@@ -56,7 +56,10 @@ export async function generateMetadata({ params }, parent: ResolvingMetadata) {
 
 const fetchPostDetail = async (id: string) => {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts/${id}`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: {
+      revalidate: 10,
+    },
   });
 
   if (!res.ok) {
@@ -67,18 +70,22 @@ const fetchPostDetail = async (id: string) => {
 };
 
 async function getComments(): Promise<CommentModel[] | null> {
-  try {
-    const res = await commentService.index<CommentModel>({});
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/comment`);
 
-    return res.data;
-  } catch {
-    return null;
+  if (!res.ok) {
+    throw new Error("Can't get blog comments");
   }
+
+  return res.json();
 }
 
 async function getRelatedPosts(excludeId: string): Promise<PostModel[]> {
   try {
-    const { data } = await postService.index({ _limit: 3 });
+    const data = await fetchPosts({
+      limit: 3,
+      revalidate: 2,
+      cache: "force-cache",
+    });
 
     if (!data) return [];
 

@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { BiPlusCircle } from "react-icons/bi";
-import { postService } from "@/services/api";
 
 import Table from "@/components/common/Table";
 import Alert from "@/components/common/Alert";
@@ -16,7 +15,7 @@ import { PostModel } from "@/types/blog.model";
 export const fetchPosts = async () => {
   const session = await getSession();
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
       cache: "no-store",
     });
 
@@ -56,7 +55,7 @@ const DashboardClient = ({ posts: initialPosts }) => {
     if (!postToDelete) return;
     setIsLoading(true);
     try {
-      await postService.destroy(postToDelete.id);
+      await deletePost(postToDelete.id);
       setToast({ type: "success", message: "Post deleted successfully" });
 
       await refreshPosts();
@@ -67,6 +66,22 @@ const DashboardClient = ({ posts: initialPosts }) => {
       closeModal();
     }
   }, [postToDelete]);
+
+  const deletePost = async (id: string) => {
+    try {
+      const res = await fetch(`/api/posts/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        throw new Error("delete post failed");
+      }
+
+      return await res.json();
+    } catch {
+      return null;
+    }
+  };
 
   const refreshPosts = async () => {
     setIsLoading(true);

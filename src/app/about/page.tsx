@@ -4,7 +4,10 @@ import { AboutModel } from "@/types/about.model";
 
 async function fetchPageData(): Promise<AboutModel> {
   const res = await fetch(`${process.env.NEXTAUTH_URL}/api/about`, {
-    cache: "no-store",
+    cache: "force-cache",
+    next: {
+      revalidate: 10,
+    },
   });
 
   if (!res.ok) throw new Error("Error when getting about");
@@ -80,16 +83,16 @@ export default async function AboutPage() {
             <h3 className="text-xl font-semibold mb-4">
               {aboutData.story.title}
             </h3>
-            {aboutData.story.content.map((paragraph, index) => (
-              <p key={index} className="mb-4">
+            {aboutData.story.content.map((paragraph) => (
+              <p key={paragraph} className="mb-4">
                 {paragraph}
               </p>
             ))}
             <h3 className="text-xl font-semibold mb-4 mt-8">
               {aboutData.mission.title}
             </h3>
-            {aboutData.mission.content.map((paragraph, index) => (
-              <p key={index} className="mb-4">
+            {aboutData.mission.content.map((paragraph) => (
+              <p key={paragraph} className="mb-4">
                 {paragraph}
               </p>
             ))}
