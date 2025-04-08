@@ -2,7 +2,12 @@ import PostList from "./PostList";
 
 const fetchPosts = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+      cache: "no-store",
+      next: {
+        revalidate: 5,
+      },
+    });
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }

@@ -1,7 +1,7 @@
 "use client";
 
 import { PostModel } from "@/types/blog.model";
-import React, { useState } from "react";
+import React from "react";
 import { BiEdit, BiTrash } from "react-icons/bi";
 import Image from "next/image";
 import Pagination from "@/components/common/Pagination";
@@ -11,15 +11,18 @@ interface TableProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   pageSize?: number;
+  currentPage: number;
+  onPageChange: (page: number) => void;
 }
 
 const Table: React.FC<TableProps> = ({
   posts,
   onEdit,
   onDelete,
+  onPageChange,
   pageSize = 5,
+  currentPage,
 }) => {
-  const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(posts.length / pageSize);
   const paginatedPosts = posts.slice(
     (currentPage - 1) * pageSize,
@@ -28,7 +31,7 @@ const Table: React.FC<TableProps> = ({
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      onPageChange(page);
     }
   };
 

@@ -13,13 +13,12 @@ import { POST_INITIAL } from "@/shared/constants";
 import { CreatePostData } from "@/types/blog.model";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useSearchParams } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 
 const CreateEditPost: React.FC = () => {
   const { data: session } = useSession();
-  const router = useRouter();
   const queryParams = useSearchParams();
   const postId = queryParams.get("id");
   const isEditMode = !!postId;
@@ -106,8 +105,8 @@ const CreateEditPost: React.FC = () => {
 
   const finalizeSubmission = () => {
     setTimeout(() => {
-      router.push("/dashboard");
       setIsLoading(false);
+      redirect("/dashboard");
     }, 1000);
   };
 

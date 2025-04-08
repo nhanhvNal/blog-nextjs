@@ -18,6 +18,7 @@ const Dashboard = ({ posts: initialPosts }) => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleDelete = useCallback(
     (id) => {
@@ -38,6 +39,7 @@ const Dashboard = ({ posts: initialPosts }) => {
       setToast({ type: "success", message: "Post deleted successfully" });
 
       await refreshPosts();
+      setCurrentPage(1);
     } catch {
       setToast({ type: "warning", message: "Failed to delete post" });
     } finally {
@@ -88,7 +90,15 @@ const Dashboard = ({ posts: initialPosts }) => {
             Add New Post
           </Button>
         </div>
-        <Table posts={posts} onEdit={handleEdit} onDelete={handleDelete} />
+        <Table
+          posts={posts}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          pageSize={5}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+        />
+
         <Modal
           show={showModal}
           onConfirm={confirmDelete}
