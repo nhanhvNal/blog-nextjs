@@ -1,21 +1,13 @@
 import PostList from "./PostList";
 
 const fetchPosts = async () => {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-      cache: "no-store",
-      next: {
-        revalidate: 5,
-      },
-    });
-    if (!res.ok) {
-      throw new Error("Failed to fetch data");
-    }
-    const data = await res.json();
-    return data;
-  } catch {
-    return [];
-  }
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
+    cache: "no-store",
+  }); 
+  
+
+  if (!res.ok) throw new Error("Error when getting blog posts");
+  return res.json();
 };
 
 import type { Metadata } from "next";

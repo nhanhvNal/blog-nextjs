@@ -10,8 +10,29 @@ import Alert from "@/components/common/Alert";
 import Button from "@/components/common/Button";
 import Modal from "@/components/common/Modal";
 import LoadingPage from "@/components/common/LoadingPage";
+import { getSession } from "next-auth/react";
+import { PostModel } from "@/types/blog.model";
 
-const Dashboard = ({ posts: initialPosts }) => {
+export const fetchPosts = async () => {
+  const session = await getSession();
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const data: PostModel[] = await res.json();
+
+    const userPosts = data.filter((post) => post.author === session.user.name);
+    return userPosts;
+  } catch {
+    return [];
+  }
+};
+
+const DashboardClient = ({ posts: initialPosts }) => {
   const router = useRouter();
   const [posts, setPosts] = useState(initialPosts);
   const [toast, setToast] = useState(null);
@@ -50,7 +71,7 @@ const Dashboard = ({ posts: initialPosts }) => {
   const refreshPosts = async () => {
     setIsLoading(true);
     try {
-      const { data } = await postService.index();
+      const data = await fetchPosts();
       setPosts(data);
     } catch {
       setToast({ type: "error", message: "Error loading posts" });
@@ -110,4 +131,4 @@ const Dashboard = ({ posts: initialPosts }) => {
   );
 };
 
-export default Dashboard;
+export default DashboardClient;

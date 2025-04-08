@@ -5,15 +5,19 @@ export async function middleware(req: NextRequest) {
   const token = req.cookies.get("next-auth.session-token")?.value;
   const authHeader = req.headers.get("authorization");
 
-  if (token) {
+  const { pathname } = req.nextUrl;
+
+  if (pathname.startsWith("/api/auth")) {
     return NextResponse.next();
   }
 
-  if (!token && !!authHeader) {
-    const url = req.nextUrl.clone();
-    url.pathname = "/login";
-
-    return NextResponse.redirect(url);
+  if (pathname.startsWith("/dashboard")) {
+    if (token) {
+      return NextResponse.next();
+    }
+    const loginUrl = req.nextUrl.clone();
+    loginUrl.pathname = "/login";
+    return NextResponse.redirect(loginUrl);
   }
 
   if (authHeader?.startsWith("Basic ")) {
@@ -28,21 +32,17 @@ export async function middleware(req: NextRequest) {
       ) {
         return NextResponse.next();
       }
-    } catch {
-      console.error("Invalid Authorization header format");
-    }
+    } catch {}
   }
 
-  return new NextResponse(JSON.stringify({ error: "Unauthorized" }), {
+  return new NextResponse("Unauthorized", {
     status: 401,
     headers: {
-      "Content-Type": "application/json",
       "WWW-Authenticate": 'Basic realm="Secure Area"',
     },
   });
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
-  missing: [{ source: "/api/auth/:path*" }],
+  matcher: ["/((?!api/).*)"],
 };

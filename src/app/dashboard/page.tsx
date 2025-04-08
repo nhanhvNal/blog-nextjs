@@ -1,18 +1,23 @@
 import { Metadata } from "next";
-import Dashboard from "./Dashboard";
+import DashboardClient from "./DashboardClient";
+import { PostModel } from "@/types/blog.model";
+import { authOptions } from "../api/auth/[...nextauth]/options";
+import { getServerSession } from "next-auth";
 
 const fetchPosts = async () => {
+  const session = await getServerSession(authOptions);
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/posts`, {
-      next: {
-        revalidate: 1,
-      },
+      cache: "no-store",
     });
+
     if (!res.ok) {
       throw new Error("Failed to fetch data");
     }
-    const data = await res.json();
-    return data;
+    const data: PostModel[] = await res.json();
+
+    const userPosts = data.filter((post) => post.author === session.user.name);
+    return userPosts;
   } catch {
     return [];
   }
@@ -41,5 +46,5 @@ export const generateMetadata = async (): Promise<Metadata> => {
 
 export default async function DashboardSSG() {
   const posts = await fetchPosts();
-  return <Dashboard posts={posts} />;
+  return <DashboardClient posts={posts} />;
 }

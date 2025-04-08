@@ -14,7 +14,7 @@ export default function RelatedPosts({ posts }: Readonly<RelatedPostsProps>) {
           key={post.id}
           className="rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300"
         >
-          <Link href={`/post/${post.id}`} className="block">
+          <Link href={`/posts/${post.id}`} className="block">
             {post.image && (
               <div className="overflow-hidden">
                 <Image

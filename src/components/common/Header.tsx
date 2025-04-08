@@ -16,7 +16,7 @@ const Header = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const router = useRouter();
-  const heightHeader = 64;
+  const heightHeader = 20;
 
   useEffect(() => {
     setIsScrolled(window.scrollY > heightHeader);

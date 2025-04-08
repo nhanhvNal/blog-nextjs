@@ -1,14 +1,14 @@
 import Image from "next/image";
 import { Metadata } from "next";
-import { aboutService } from "@/services/api";
 import { AboutModel } from "@/types/about.model";
 
 async function fetchPageData(): Promise<AboutModel> {
-  const res = await aboutService.index<AboutModel>({
-    next: { revalidate: 10 },
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/about`, {
+    cache: "no-store",
   });
 
-  return res.data as unknown as AboutModel;
+  if (!res.ok) throw new Error("Error when getting about");
+  return res.json();
 }
 
 export async function generateMetadata(): Promise<Metadata> {

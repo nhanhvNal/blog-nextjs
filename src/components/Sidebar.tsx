@@ -67,7 +67,7 @@ const renderPopularPosts = ({
       {popularPosts.map((post) => (
         <li key={post.id}>
           <Link
-            href={`/post/${post.id}`}
+            href={`/posts/${post.id}`}
             className="flex items-center space-x-3 hover:text-blue-500"
           >
             <Image

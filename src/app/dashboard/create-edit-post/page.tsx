@@ -30,11 +30,6 @@ const CreateEditPost: React.FC = () => {
   useEffect(() => {
     if (post) {
       setTags(post.tags || []);
-    }
-  }, [post]);
-
-  useEffect(() => {
-    if (post) {
       setFormData((prevFormData) => {
         const isChanged =
           prevFormData.title !== post.title ||

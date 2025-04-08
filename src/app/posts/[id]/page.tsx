@@ -12,7 +12,10 @@ import { CommentModel } from "@/types/comment.model";
 export async function generateMetadata({ params }, parent: ResolvingMetadata) {
   const { id } = await params;
   try {
-    const [post, comments] = await Promise.all([getPost(id), getComments()]);
+    const [post, comments] = await Promise.all([
+      fetchPostDetail(id),
+      getComments(),
+    ]);
 
     if (!post) {
       return {
@@ -51,13 +54,17 @@ export async function generateMetadata({ params }, parent: ResolvingMetadata) {
   }
 }
 
-async function getPost(id: string): Promise<PostModel | null> {
-  try {
-    return (await postService.show<PostModel>(id)).data as unknown as PostModel;
-  } catch {
-    return null;
+const fetchPostDetail = async (id: string) => {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts/${id}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) {
+    throw new Error("Can't get blog detail");
   }
-}
+
+  return res.json();
+};
 
 async function getComments(): Promise<CommentModel[] | null> {
   try {
@@ -85,7 +92,7 @@ async function getRelatedPosts(excludeId: string): Promise<PostModel[]> {
 export default async function PostDetailPage({ params }) {
   const { id } = await params;
   const [post, comments, relatedPosts] = await Promise.all([
-    getPost(id),
+    fetchPostDetail(id),
     getComments(),
     getRelatedPosts(id),
   ]);
